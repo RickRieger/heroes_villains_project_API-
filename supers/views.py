@@ -25,15 +25,15 @@ def supers_list(request):
     elif hero and villain:
         hero_found = get_object_or_404(Super,name=hero)
         villain_found = get_object_or_404(Super,name=villain)
-        hero_powers = Power.objects.filter(super = hero_found.id)
-        villain_powers = Power.objects.filter(super = villain_found.id)
+        hero_powers = Power.objects.filter(super = hero_found.id).count()
+        villain_powers = Power.objects.filter(super = villain_found.id).count()
         hero_found_serialized = SuperSerializer(hero_found)
         villain_found_serialized = SuperSerializer(villain_found)
-        if len(hero_powers) > len(villain_powers):
+        if hero_powers > villain_powers:
             return Response({'winner':hero_found_serialized.data, 'looser':villain_found_serialized.data}, status=status.HTTP_200_OK)
-        elif len(hero_powers) < len(villain_powers):
+        elif hero_powers < villain_powers:
             return Response({'winner':villain_found_serialized.data, 'looser':hero_found_serialized.data}, status=status.HTTP_200_OK)
-        elif len(hero_powers) == len(villain_powers):
+        elif hero_powers == villain_powers:
             return Response({'draw':hero_found_serialized.data, 'draw':villain_found_serialized.data}, status=status.HTTP_200_OK)
     else: 
       heros = supers.filter(super_type_id__type = 'hero')
